@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.google.android.gms.samples.vision.ocrreader"
-        minSdkVersion 9
-        targetSdkVersion 23
+        minSdkVersion 21
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -17,11 +18,33 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        // fix for duplicate file exception
+        // https://github.com/ReactiveX/RxJava/issues/4445
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile 'com.android.support:support-v4:24.2.0'
-    compile 'com.google.android.gms:play-services-vision:9.4.0+'
-    compile 'com.android.support:design:24.2.0'
+	compile 'com.android.support:support-v4:25.4.0'
+    compile 'com.android.support:design:25.4.0'
+
+    compile 'com.google.android.gms:play-services-vision:11.6.0'            // ocr
+
+    compile 'com.google.code.gson:gson:2.8.0'                               // json
+
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'                         // web
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
+
+    compile 'io.reactivex:rxjava:1.3.0'                                    // rx
+    compile 'io.reactivex:rxandroid:1.2.1'
+
+    compile 'com.jakewharton.timber:timber:4.5.1'                           // logging
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
 }
