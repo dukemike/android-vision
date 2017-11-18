@@ -35,8 +35,11 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
     private int mId;
 
     private static final int TEXT_COLOR = Color.WHITE;
+    private static final int BORDER_COLOR = Color.DKGRAY;
+    private static final int BACKGROUND_COLOR = Color.parseColor("#88000000");
 
-    private static Paint sRectPaint;
+    private static Paint sRectBorderPaint;
+    private static Paint sRectFillPaint;
     private static Paint sTextPaint;
     private final TextBlock mText;
 
@@ -45,17 +48,23 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
 
         mText = text;
 
-        if (sRectPaint == null) {
-            sRectPaint = new Paint();
-            sRectPaint.setColor(TEXT_COLOR);
-            sRectPaint.setStyle(Paint.Style.STROKE);
-            sRectPaint.setStrokeWidth(4.0f);
+        if (sRectBorderPaint == null) {
+            sRectBorderPaint = new Paint();
+            sRectBorderPaint.setColor(BORDER_COLOR);
+            sRectBorderPaint.setStyle(Paint.Style.STROKE);
+            sRectBorderPaint.setStrokeWidth(4.0f);
+        }
+
+        if (sRectFillPaint == null) {
+            sRectFillPaint = new Paint();
+            sRectFillPaint.setColor(BACKGROUND_COLOR);
+            sRectFillPaint.setStyle(Paint.Style.FILL);
         }
 
         if (sTextPaint == null) {
             sTextPaint = new Paint();
             sTextPaint.setColor(TEXT_COLOR);
-            sTextPaint.setTextSize(54.0f);
+            sTextPaint.setTextSize(48);
         }
         // Redraw the overlay, as this graphic has been added.
         postInvalidate();
@@ -109,7 +118,8 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
         rect.top = translateY(rect.top);
         rect.right = translateX(rect.right);
         rect.bottom = translateY(rect.bottom);
-        canvas.drawRect(rect, sRectPaint);
+        canvas.drawRoundRect(rect, 8, 8, sRectBorderPaint);
+        canvas.drawRoundRect(rect, 8, 8, sRectFillPaint);
 
         // Break the text into multiple lines and draw each one according to its own bounding box.
         List<? extends Text> textComponents = text.getComponents();
