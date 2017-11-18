@@ -16,15 +16,21 @@
 
 package com.google.android.gms.samples.vision.ocrreader;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.samples.vision.ocrreader.openfda.OpenFDA;
+import com.google.android.gms.samples.vision.ocrreader.openfda.OpenFDADrugLabel;
+
+import rx.Subscription;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Main activity demonstrating how to pass extra parameters to an activity that
@@ -53,6 +59,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
         useFlash = (CompoundButton) findViewById(R.id.use_flash);
 
         findViewById(R.id.read_text).setOnClickListener(this);
+
+        OpenFDA openFDA = new OpenFDA();
+        Subscription subscription =
+                openFDA.queryLabel("lansoprazole")
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(Schedulers.computation())
+                        .subscribe((OpenFDADrugLabel label) -> {
+                            label.cleanValues();
+                            Timber.i("generic name = %s", label.getOpenFDA().getGenericName());
+                            Timber.i("brand name = %s", label.getOpenFDA().getBrandName());
+                            Timber.i("drug %s warning for alcohol", label.isWarningForAlcohol() ? "has" : "does NOT have");
+                            Timber.i("drug %s warning for nausea", label.isWarningForNausea() ? "has" : "does NOT have");
+                            Timber.i("drug %s warning for dizziness", label.isWarningForDizziness() ? "has" : "does NOT have");
+                            Timber.i("drug %s warning for drowsiness", label.isWarningForDrowsines() ? "has" : "does NOT have");
+                            Timber.i("drug %s warning against chewing", label.isWarningAgainstChewing() ? "has" : "does NOT have");
+                            Timber.i("drug %s warning about lethal overdosing", label.isWarningForLethalOverdose() ? "has" : "does NOT have");
+                        }, Timber::e);
     }
 
     /**
